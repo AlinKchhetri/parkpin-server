@@ -14,6 +14,13 @@ export const sendNotification = async (token, title, body) => {
         'Accept-encoding': 'gzip, deflate',
         'Content-Type': 'application/json',
     };
-
-    await axios.post('https://exp.host/--/api/v2/push/send', JSON.stringify(message), {headers});
+    try {
+        await axios.post('https://exp.host/--/api/v2/push/send', JSON.stringify(message), {headers});
+        // console.log('sent');
+        const response = 'sent'
+        return response
+    } catch (error) {
+        console.log(error);
+        return error;
+    }
 };

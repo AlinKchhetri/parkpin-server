@@ -46,15 +46,17 @@ export const respond = async (req, res) => {
     try {
 
         const bookings = await Bookings.findById(req.params.id);
-        await sendNotification('ExponentPushToken[vH6sIsOQzZwrqGO0JYipXQ]', 'Booking Response', 'Body for Booking response');
-
+        
         const { response } = req.body;
         if (response) bookings.response = response;
         await bookings.save();
-
+        
+        const errorMessage= await sendNotification('ExponentPushToken[vH6sIsOQzZwrqGO0JYipXQ]', 'Booking Response', 'Body for Booking response');
+        console.log("🚀 ~ file: Booking.js:55 ~ respond ~ errorMessage", errorMessage)
         res.status(200).json({
             success: true,
-            message: "Booking response submitted successfully"
+            message: "Booking response submitted successfully",
+            error: errorMessage
         });
     } catch (error) {
         res.status(500).json({
