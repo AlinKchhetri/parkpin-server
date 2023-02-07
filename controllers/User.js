@@ -8,7 +8,6 @@ import fs from 'fs'
 export const register = async (req, res) => {
     try {
         const { name, email, password, phoneNumber } = req.body;
-        const avatar = req.files.avatar.tempFilePath;
 
         let user = await User.findOne({ email });
 
@@ -18,12 +17,6 @@ export const register = async (req, res) => {
                 message: 'User already registered'
             });
         }
-
-        const mycloud = await cloudinary.v2.uploader.upload(avatar, {
-            folder: 'User-Avatar',
-        });
-
-        fs.rmSync("./tmp", { recursive: true });
 
         const otp = Math.floor(Math.random() * 1000000);
 
@@ -35,10 +28,6 @@ export const register = async (req, res) => {
             email,
             password,
             phoneNumber,
-            avatar: {
-                public_id: mycloud.public_id,
-                url: mycloud.secure_url
-            },
             otp,
             otp_expiry,
         });
