@@ -87,6 +87,7 @@ export const googleAuthRegister = async (req, res) => {
         let user = await User.findOne({ email });
 
         if (user) {
+            sendToken(res, user, 201, "OTP sent successfully");
             return res.status(400).json({
                 success: false,
                 message: 'User already registered'
