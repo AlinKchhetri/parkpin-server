@@ -96,7 +96,8 @@ export const googleAuthRegister = async (req, res) => {
         user = await User.create({
             name,
             email,
-            password
+            password,
+            verified: true,
         });
 
         sendToken(res, user, 201, "OTP sent successfully");
