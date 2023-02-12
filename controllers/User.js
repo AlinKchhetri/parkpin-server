@@ -86,17 +86,14 @@ export const googleAuthRegister = async (req, res) => {
 
         let user = await User.findOne({ email });
 
-        if (user) {
-            sendToken(res, user, 201, "OTP sent successfully");
-            return;
+        if (!user) {
+            user = await User.create({
+                name,
+                email,
+                password,
+                verified: true,
+            });
         }
-
-        user = await User.create({
-            name,
-            email,
-            password,
-            verified: true,
-        });
 
         sendToken(res, user, 201, "OTP sent successfully");
 
