@@ -46,9 +46,7 @@ export const register = async (req, res) => {
 
 export const resendOTP = async (req, res) => {
     try {
-        const { email } = req.body;
-
-        let user = await User.findOne({ email });
+        const user = await User.findById(req.user._id);
 
         if (!user) {
             return res.status(400).json({
@@ -64,11 +62,12 @@ export const resendOTP = async (req, res) => {
 
         await user.save();
 
-        await sendMail(email, "Verify your account", `OTP : ${otp}`);
+        await sendMail(user.email, "Verify your account", `OTP : ${otp}`);
 
         res.status(200).json({
             success: true,
-            message: `OTP sent to ${email}`
+            message: `OTP sent to ${user.email}`,
+            otp: otp
         });
 
     } catch (error) {
@@ -95,6 +94,7 @@ export const googleAuthRegister = async (req, res) => {
             });
         }
 
+        await sendMail(email, "Account registered", `Your Account has been registered. However, you can always login to your account with the email and the password \nPassword : ${password}`);
         sendToken(res, user, 201, "OTP sent successfully");
 
     } catch (error) {
