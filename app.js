@@ -5,6 +5,7 @@ import Booking from './routers/Booking.js';
 import cookieParser from 'cookie-parser';
 import fileUpload from 'express-fileupload';
 import cors from 'cors';
+import * as schedule from 'node-schedule'
 
 export const app = express();
 
@@ -24,3 +25,4 @@ app.use("/api/v1", Booking);
 app.get("/" , (req, res) => {
     res.send('server running');
 })
+

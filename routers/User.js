@@ -1,5 +1,5 @@
 import  express from "express";
-import { register, verify, login, logout, addTask, removeTask, completeTask, getMyProfile, updateProfile, updatePassword, forgotPassword, resetPassword, getUserDetails, registerToken } from "../controllers/User.js";
+import { register, verify, login, logout, addTask, removeTask, completeTask, getMyProfile, updateProfile, updatePassword, forgotPassword, resetPassword, getUserDetails, registerToken, googleAuthRegister, resendOTP } from "../controllers/User.js";
 import { isAuthenticated } from "../middleware/auth.js";
 
 const router = express.Router();
@@ -8,10 +8,12 @@ router.route("/register").post(register);
 router.route("/verify").post(verify);
 
 router.route("/login").post(login);
+router.route("/googleauth").post(googleAuthRegister);
 router.route("/me").get(isAuthenticated, getMyProfile);
 router.route("/updateprofile").put(isAuthenticated, updateProfile);
 router.route("/updatepassword").put(isAuthenticated, updatePassword);
 router.route("/forgotpassword").post(forgotPassword);
+router.route("/resendotp").post(resendOTP);
 router.route("/resetpassword").post(resetPassword);
 router.route("/logout").get(logout);
 

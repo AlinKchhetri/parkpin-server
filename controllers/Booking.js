@@ -1,6 +1,7 @@
 import { Bookings } from "../models/bookings.js";
 import { ParkingSpace } from "../models/parkingSpace.js";
 import { sendNotification } from "../utils/sendNotification.js";
+import { scheduleJob } from "node-schedule";
 
 export const book = async (req, res) => {
     try {

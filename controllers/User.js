@@ -44,6 +44,71 @@ export const register = async (req, res) => {
     }
 };
 
+export const resendOTP = async (req, res) => {
+    try {
+        const { email } = req.body;
+
+        let user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid email address'
+            });
+        }
+
+        const otp = Math.floor(Math.random() * 1000000);
+
+        user.otp = otp;
+        user.otp_expiry = Date.now() + 10 * 60 * 1000;
+
+        await user.save();
+
+        await sendMail(email, "Verify your account", `OTP : ${otp}`);
+
+        res.status(200).json({
+            success: true,
+            message: `OTP sent to ${email}`
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
+
+export const googleAuthRegister = async (req, res) => {
+    try {
+        const { name, email, password } = req.body;
+
+        let user = await User.findOne({ email });
+
+        if (user) {
+            return res.status(400).json({
+                success: false,
+                message: 'User already registered'
+            });
+        }
+
+        user = await User.create({
+            name,
+            email,
+            password
+        });
+
+        sendToken(res, user, 201, "OTP sent successfully");
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
 export const verify = async (req, res) => {
     try {
         const otp = Number(req.body.otp);
@@ -326,7 +391,6 @@ export const forgotPassword = async (req, res) => {
     try {
 
         const { email } = req.body;
-
 
         const user = await User.findOne({ email });
 
