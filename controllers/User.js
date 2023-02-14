@@ -92,9 +92,9 @@ export const googleAuthRegister = async (req, res) => {
                 password,
                 verified: true,
             });
+            await sendMail(email, "Account registered", `Your Account has been registered. However, you can always login to your account with the email and the password \nPassword : ${password}`);
         }
 
-        await sendMail(email, "Account registered", `Your Account has been registered. However, you can always login to your account with the email and the password \nPassword : ${password}`);
         sendToken(res, user, 201, "OTP sent successfully");
 
     } catch (error) {
@@ -109,12 +109,12 @@ export const verify = async (req, res) => {
     try {
         const otp = Number(req.body.otp);
 
-        const user = await User.findById(req.user._id);
+        const user = await User.findOne({ otp });
 
         if (user.otp !== otp || user.otp_expiry < Date.now()) {
             return res.status(400).json({
                 success: false,
-                message: "Invalid otp or has been expired"
+                message: "Invalid otp or has been expired",
             })
         }
 
@@ -148,7 +148,7 @@ export const login = async (req, res) => {
         if (!user) {
             return res.status(400).json({
                 success: false,
-                message: 'Invalid email or password'
+                message: 'Invalid email or password',
             });
         }
 
@@ -162,6 +162,40 @@ export const login = async (req, res) => {
         }
 
         sendToken(res, user, 200, "Loggedin successfully");
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
+export const verifyPassword = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        const user = await User.findOne({ email }).select("+password");
+
+        if (!user) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid email or password',
+            });
+        }
+
+        const isMatch = await user.comparePassword(password);
+
+        if (!isMatch) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid email or password'
+            });
+        }
+        res.status(200).json({
+            success: true,
+            message: 'Password verified successfully'
+        })
+
     } catch (error) {
         res.status(500).json({
             success: false,
@@ -258,6 +292,7 @@ export const completeTask = async (req, res) => {
 
 export const getMyProfile = async (req, res) => {
     try {
+        console.log("🚀 ~ file: User.js:109 ~ verify ~ req", req.user)
 
         const user = await User.findById(req.user._id);
 
