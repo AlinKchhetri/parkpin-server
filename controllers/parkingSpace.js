@@ -19,12 +19,24 @@ export const addNewSpace = async (req, res) => {
 
         fs.rmSync("./tmp", { recursive: true });
 
+        let parkingSpace = await ParkingSpace.findOne({
+            location: {
+                $near: {
+                    $geometry: {
+                        type: "Point",
+                        coordinates: [longitude, latitude]
+                    },
+                    $maxDistance: 10
+                }
+            }
+        });
 
-        // await axios.get(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`)
-        //     .then((response) =>  {
-        //         console.log("🚀 ~ file: parkingSpace.js:25 ~ .then ~ result", response.data.display_name)
-        //     })
-        //     .catch((error) => console.log(error));
+        if (parkingSpace) {
+            return res.status(400).json({
+                success: false,
+                message: 'Space already registered'
+            });
+        }
 
 
         let parkingSpaceDetails = await ParkingSpace.create({
@@ -46,8 +58,8 @@ export const addNewSpace = async (req, res) => {
                 url: imageCloud.secure_url
             },
             location: {
-                latitude,
-                longitude,
+                type: "Point",
+                coordinates: [parseFloat(longitude), parseFloat(latitude)]
             },
         });
 
@@ -69,6 +81,78 @@ export const addNewSpace = async (req, res) => {
 export const getMyParking = async (req, res) => {
     try {
         const parkingSpaceDetails = await ParkingSpace.find({ 'ownerDetails': req.params.id }).populate('ownerDetails')
+
+        res.status(200).json({
+            success: true,
+            message: 'Details retrieved successfully',
+            parkingSpaceDetails: parkingSpaceDetails
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
+export const getParkingDetails = async (req, res) => {
+    try {
+        const parkingSpaceDetails = await ParkingSpace.findById(req.params.id).populate("ownerDetails");
+
+        res.status(200).json({
+            success: true,
+            message: 'Details retrieved successfully',
+            parkingSpaceDetails: parkingSpaceDetails
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
+export const getAllParking = async (req, res) => {
+    try {
+        const parkingSpaceDetails = await ParkingSpace.find({
+            $or: [
+                { "four_wheeler.no_slot": { $gt: 0 } },
+                { "two_wheeler.no_slot": { $gt: 0 } }
+            ]
+        }).populate('ownerDetails')
+
+        res.status(200).json({
+            success: true,
+            message: 'Details retrieved successfully',
+            parkingSpaceDetails: parkingSpaceDetails
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
+export const getNearParking = async (req, res) => {
+    try {
+        const {latitude, longitude} = req.body;
+
+        const parkingSpaceDetails = await ParkingSpace.aggregate([
+            {
+                $geoNear: {
+                    near: {
+                        type: "Point",
+                        coordinates: [parseFloat(longitude), parseFloat(latitude)]
+                    },
+                    key: "location",
+                    maxDistance: 1000,
+                    // maxDistance: parseFloat(1000) * 1609,
+                    distanceField: "dist.calculatedDistance",
+                    spherical: true
+                },
+            }
+        ]);
 
         res.status(200).json({
             success: true,
