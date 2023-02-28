@@ -34,6 +34,11 @@ const bookingsSchema = new mongoose.Schema({
         enum: ['Pending', 'Accepted', 'Rejected'],
         default: 'Pending'
     },
+    vehicleType: {
+        type: String,
+        enum: ['bike', 'car'],
+        default: 'bike'
+    },
     total_fee: {
         type: Number,
         default: 0,
