@@ -5,7 +5,7 @@ import { scheduleJob } from "node-schedule";
 
 export const book = async (req, res) => {
     try {
-        const { userId, ownerId, parkingSpaceId, startTime, endTime, vehicleType } = req.body;
+        const { userId, ownerId, parkingSpaceId, startTime, endTime, vehicleType, fee } = req.body;
 
         let bookingDetails = await Bookings.create({
             userDetails: userId,
@@ -13,10 +13,11 @@ export const book = async (req, res) => {
             parkingSpaceDetails: parkingSpaceId,
             bookedAt: startTime,
             booking_endTime: endTime,
-            vehicleType: vehicleType
+            vehicleType: vehicleType,
+            total_fee: fee
         });
 
-        const errorMessage = await sendNotification('ExponentPushToken[vH6sIsOQzZwrqGO0JYipXQ]', 'ParkPin 📬', `You have a reservation request for your parking space} `);
+        const errorMessage = await sendNotification('ExponentPushToken[vH6sIsOQzZwrqGO0JYipXQ]', 'ParkPin 📬', `You have a reservation request for your parking space `);
 
         res.status(200).json({
             success: true,
@@ -49,9 +50,26 @@ export const getMyBooking = async (req, res) => {
     }
 };
 
+export const getMyBookingRequests = async (req, res) => {
+    try {
+        const bookingDetails = await Bookings.find({ 'ownerDetails': req.params.id }).populate('userDetails').populate('ownerDetails').populate('parkingSpaceDetails');
+
+        res.status(200).json({
+            success: true,
+            message: 'Details retrieved successfully',
+            bookingDetails: bookingDetails
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
+
 export const respond = async (req, res) => {
     try {
-
         const bookings = await Bookings.findById(req.params.id);
 
         const parkingSpace = await ParkingSpace.findById(bookings.parkingSpaceDetails);
