@@ -18,7 +18,7 @@ export const register = async (req, res) => {
             });
         }
 
-        const otp = Number(Math.floor(Math.random() * 1000000).toString().padStart(6,0))
+        const otp = Number(Math.floor(Math.random() * 1000000).toString().padStart(6, 0))
 
         const otp_expiry = new Date(Date.now() + process.env.OTP_EXPIRY * 60 * 1000);
 
@@ -55,7 +55,7 @@ export const resendOTP = async (req, res) => {
             });
         }
 
-        const otp = Number(Math.floor(Math.random() * 1000000).toString().padStart(6,0))
+        const otp = Number(Math.floor(Math.random() * 1000000).toString().padStart(6, 0))
 
         user.otp = otp;
         user.otp_expiry = Date.now() + 10 * 60 * 1000;
@@ -432,7 +432,7 @@ export const forgotPassword = async (req, res) => {
             })
         }
 
-        const otp = Number(Math.floor(Math.random() * 1000000).toString().padStart(6,0))
+        const otp = Number(Math.floor(Math.random() * 1000000).toString().padStart(6, 0))
 
         user.resetPasswordOtp = otp;
         user.resetPasswordOtpExpiry = Date.now() + 10 * 60 * 1000;

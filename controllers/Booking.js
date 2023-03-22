@@ -1,4 +1,5 @@
 import { Bookings } from "../models/bookings.js";
+import { User } from "../models/users.js";
 import { ParkingSpace } from "../models/parkingSpace.js";
 import { sendNotification } from "../utils/sendNotification.js";
 import { scheduleJob } from "node-schedule";
@@ -6,6 +7,9 @@ import { scheduleJob } from "node-schedule";
 export const book = async (req, res) => {
     try {
         const { userId, ownerId, parkingSpaceId, startTime, endTime, vehicleType, fee } = req.body;
+
+        const ownerDetails = await User.findById(ownerId);
+        const userDetails = await User.findById(userId);
 
         let bookingDetails = await Bookings.create({
             userDetails: userId,
@@ -17,13 +21,18 @@ export const book = async (req, res) => {
             total_fee: fee
         });
 
-        const errorMessage = await sendNotification('ExponentPushToken[vH6sIsOQzZwrqGO0JYipXQ]', 'ParkPin 📬', `You have a reservation request for your parking space `);
+        if (ownerDetails?.expo_token) {
+            const errorMessage = await sendNotification(ownerDetails?.expo_token, 'ParkPin 📬', `You have a reservation request for your parking space `);
+        }
+
+        if (userDetails?.expo_token) {
+            const errorMessage = await sendNotification(userDetails?.expo_token, 'ParkPin 📬', `Your reservation request for parking space has been sent successfully`);
+        }
 
         res.status(200).json({
             success: true,
             message: 'Booking completed successfully',
-            booking: bookingDetails,
-            error: errorMessage
+            booking: bookingDetails
         })
     } catch (error) {
         res.status(500).json({
@@ -52,8 +61,12 @@ export const getMyBooking = async (req, res) => {
 
 export const getMyBookingRequests = async (req, res) => {
     try {
-        const bookingDetails = await Bookings.find({ 'ownerDetails': req.params.id }).populate('userDetails').populate('ownerDetails').populate('parkingSpaceDetails');
+        const ownerBookingDetails = await Bookings.find({ 'ownerDetails': req.params.id }).populate('userDetails').populate('ownerDetails').populate('parkingSpaceDetails');
+        const userBookingDetails = await Bookings.find({ 'userDetails': req.params.id }).populate('userDetails').populate('ownerDetails').populate('parkingSpaceDetails');
 
+        const bookingDetails = ownerBookingDetails.concat(userBookingDetails).filter((obj, index, arr) => {
+            return index === arr.findIndex(t => t._id === obj._id);
+        })
         res.status(200).json({
             success: true,
             message: 'Details retrieved successfully',
@@ -73,7 +86,8 @@ export const respond = async (req, res) => {
         const bookings = await Bookings.findById(req.params.id);
 
         const parkingSpace = await ParkingSpace.findById(bookings.parkingSpaceDetails);
-        console.log("🚀 ~ file: Booking.js:57 ~ respond ~ parkingSpace:", parkingSpace)
+
+        const userDetails = await User.findById(bookings.userDetails);
 
         const { response } = req.body;
         if (response) bookings.response = response;
@@ -88,13 +102,13 @@ export const respond = async (req, res) => {
             await parkingSpace.save();
         }
 
-        const notificationResponse = response.toLowerCase()
-        const errorMessage = await sendNotification('ExponentPushToken[vH6sIsOQzZwrqGO0JYipXQ]', 'ParkPin 📬', `Your reservation request has been ${notificationResponse} ${notificationResponse == 'rejected' ? '❌' : '✅'} `);
-        console.log("🚀 ~ file: Booking.js:55 ~ respond ~ errorMessage")
+        const notificationResponse = response.toLowerCase();
+        if (userDetails?.expo_token) {
+            const errorMessage = await sendNotification(userDetails?.expo_token, 'ParkPin 📬', `Your reservation request has been ${notificationResponse} ${notificationResponse == 'rejected' ? '❌' : '✅'} `);
+        }
         res.status(200).json({
             success: true,
-            message: "Booking response submitted successfully",
-            error: errorMessage
+            message: "Booking response submitted successfully"
         });
     } catch (error) {
         res.status(500).json({
