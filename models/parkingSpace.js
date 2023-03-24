@@ -7,8 +7,11 @@ const parkingSpaceSchema = new mongoose.Schema({
     },
     location:
     {
-        type: {type: String, required: true},
+        type: { type: String, required: true },
         coordinates: []
+    },
+    locationName: {
+        type: String, required: true
     },
     thumbnailImage: {
         public_id: String,
@@ -32,6 +35,6 @@ const parkingSpaceSchema = new mongoose.Schema({
     }
 });
 
-parkingSpaceSchema.index({location: "2dsphere"});
+parkingSpaceSchema.index({ location: "2dsphere" });
 
 export const ParkingSpace = mongoose.model("ParkingSpace", parkingSpaceSchema);

@@ -5,7 +5,7 @@ import fs from 'fs'
 
 export const addNewSpace = async (req, res) => {
     try {
-        const { ownerId, four_wheeler_no_slot, two_wheeler_no_slot, four_wheeler_rate, two_wheeler_rate, latitude, longitude } = req.body;
+        const { ownerId, locationName, four_wheeler_no_slot, two_wheeler_no_slot, four_wheeler_rate, two_wheeler_rate, latitude, longitude } = req.body;
         const image = req.files.image.tempFilePath;
         const thumbnailImage = req.files.thumbnailImage.tempFilePath;
 
@@ -61,6 +61,7 @@ export const addNewSpace = async (req, res) => {
                 type: "Point",
                 coordinates: [parseFloat(longitude), parseFloat(latitude)]
             },
+            locationName: locationName
         });
 
         res.status(200).json({
@@ -136,7 +137,7 @@ export const getAllParking = async (req, res) => {
 
 export const getNearParking = async (req, res) => {
     try {
-        const {latitude, longitude} = req.body;
+        const { latitude, longitude } = req.body;
 
         const parkingSpaceDetails = await ParkingSpace.aggregate([
             {
