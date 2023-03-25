@@ -220,6 +220,28 @@ export const logout = async (req, res) => {
     }
 };
 
+export const changeRole = async (req, res) => {
+    try {
+
+        const user = await User.findById(req.user._id);
+
+        const { role } = req.body;
+
+        if (role) user.role = role;
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Role updated successfully"
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
 export const addTask = async (req, res) => {
     try {
         const { title, description } = req.body;

@@ -29,15 +29,14 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    role: {
+        type: String,
+        enum: ['user', 'owner', 'admin'],
+        default: 'user'
+    },
     expo_token: {
         type: String,
     },
-    tasks: [{
-        title: "String",
-        description: "String",
-        completed: Boolean,
-        createdAt: Date,
-    }],
     verified: {
         type: Boolean,
         default: false,

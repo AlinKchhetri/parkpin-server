@@ -1,5 +1,5 @@
 import express from "express";
-import { register, verify, login, logout, addTask, removeTask, completeTask, getMyProfile, updateProfile, updatePassword, forgotPassword, resetPassword, getUserDetails, registerToken, googleAuthRegister, resendOTP, verifyPassword } from "../controllers/User.js";
+import { register, verify, login, logout, addTask, removeTask, completeTask, getMyProfile, updateProfile, updatePassword, forgotPassword, resetPassword, getUserDetails, registerToken, googleAuthRegister, resendOTP, verifyPassword, changeRole } from "../controllers/User.js";
 import { isAuthenticated } from "../middleware/auth.js";
 
 const router = express.Router();
@@ -12,6 +12,7 @@ router.route("/verifypassword").post(verifyPassword);
 router.route("/googleauth").post(googleAuthRegister);
 router.route("/me").get(isAuthenticated, getMyProfile);
 router.route("/updateprofile").put(isAuthenticated, updateProfile);
+router.route("/changerole").put(isAuthenticated, changeRole);
 router.route("/updatepassword").put(isAuthenticated, updatePassword);
 router.route("/forgotpassword").post(forgotPassword);
 router.route("/resendotp").get(isAuthenticated, resendOTP);
@@ -23,6 +24,6 @@ router.route("/task/:taskId").get(isAuthenticated, completeTask).delete(isAuthen
 
 
 router.route("/getuser/:id").get(getUserDetails);
-// router.route("/token").put(isAuthenticated, registerToken);
+router.route("/token").put(isAuthenticated, registerToken);
 
 export default router;
