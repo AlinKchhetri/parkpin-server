@@ -3,6 +3,9 @@ import { User } from "../models/users.js";
 import { ParkingSpace } from "../models/parkingSpace.js";
 import { sendNotification } from "../utils/sendNotification.js";
 import { scheduleJob } from "node-schedule";
+import Stripe from "stripe";
+
+const stripe = new Stripe('sk_test_51LesieK4lDTa5OSUJPmtPFpb5CnfETItKVqEC0DWG1ePoSWop2GTzbMND4HmfI2LjrxYSx1rMybyy5KsVAI8mLn800BuKNVYrP');
 
 export const book = async (req, res) => {
     try {
@@ -110,6 +113,29 @@ export const respond = async (req, res) => {
             success: true,
             message: "Booking response submitted successfully"
         });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
+export const payment = async (req, res) => {
+    try {
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: req.body.amount,
+            currency: 'npr',
+            automatic_payment_methods: {
+                enabled: true
+            }
+        });
+
+        res.status(200).json({
+            success: true,
+            message: 'Secret retrieved successfully',
+            paymentIntent: paymentIntent.client_secret
+        })
     } catch (error) {
         res.status(500).json({
             success: false,
