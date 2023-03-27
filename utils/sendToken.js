@@ -14,7 +14,8 @@ export const sendToken = (res, user, statusCode, message) => {
         phoneNumber: user.phoneNumber,
         avatarUrl: user.avatar,
         tasks: user.tasks,
-        verified: user.verified
+        verified: user.verified,
+        role: user.role
     }
     
     res.status(statusCode).cookie("token", token, options).json({

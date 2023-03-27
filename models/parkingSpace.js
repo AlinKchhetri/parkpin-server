@@ -11,7 +11,8 @@ const parkingSpaceSchema = new mongoose.Schema({
         coordinates: []
     },
     locationName: {
-        type: String, required: true
+        type: String,
+        required: true
     },
     thumbnailImage: {
         public_id: String,

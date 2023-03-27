@@ -19,24 +19,24 @@ export const addNewSpace = async (req, res) => {
 
         fs.rmSync("./tmp", { recursive: true });
 
-        let parkingSpace = await ParkingSpace.findOne({
-            location: {
-                $near: {
-                    $geometry: {
-                        type: "Point",
-                        coordinates: [longitude, latitude]
-                    },
-                    $maxDistance: 10
-                }
-            }
-        });
+        // let parkingSpace = await ParkingSpace.findOne({
+        //     location: {
+        //         $near: {
+        //             $geometry: {
+        //                 type: "Point",
+        //                 coordinates: [longitude, latitude]
+        //             },
+        //             $maxDistance: 10
+        //         }
+        //     }
+        // });
 
-        if (parkingSpace) {
-            return res.status(400).json({
-                success: false,
-                message: 'Space already registered'
-            });
-        }
+        // if (parkingSpace) {
+        //     return res.status(400).json({
+        //         success: false,
+        //         message: 'Space already registered'
+        //     });
+        // }
 
 
         let parkingSpaceDetails = await ParkingSpace.create({

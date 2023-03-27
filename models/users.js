@@ -10,10 +10,10 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
-        unique: true,
+        unique: true
     },
     phoneNumber: {
-        type: Number,
+        type: Number
     },
     password: {
         type: String,
@@ -35,7 +35,7 @@ const userSchema = new mongoose.Schema({
         default: 'user'
     },
     expo_token: {
-        type: String,
+        type: String
     },
     verified: {
         type: Boolean,
