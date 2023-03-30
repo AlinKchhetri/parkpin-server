@@ -185,5 +185,24 @@ export const getNearParking = async (req, res) => {
     }
 };
 
+export const updateSlots = async (req, res) => {
+    try {
+        const parkingSpace = await ParkingSpace.findById(req.params.id);
 
+        const { two_wheeler_slot, four_wheeler_slot } = req.body;
+        if (two_wheeler_slot) parkingSpace.two_wheeler.no_slot = two_wheeler_slot;
+        if (four_wheeler_slot) parkingSpace.four_wheeler.no_slot = four_wheeler_slot;
+        await parkingSpace.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Parking Space Slots updated successfully"
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
 

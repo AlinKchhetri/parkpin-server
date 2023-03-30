@@ -9,7 +9,7 @@ const stripe = new Stripe('sk_test_51LesieK4lDTa5OSUJPmtPFpb5CnfETItKVqEC0DWG1eP
 
 export const book = async (req, res) => {
     try {
-        const { userId, ownerId, parkingSpaceId, startTime, endTime, vehicleType, fee } = req.body;
+        const { userId, ownerId, parkingSpaceId, startTime, endTime, vehicleType, hour, fee } = req.body;
 
         const ownerDetails = await User.findById(ownerId);
         const userDetails = await User.findById(userId);
@@ -21,6 +21,7 @@ export const book = async (req, res) => {
             bookedAt: startTime,
             booking_endTime: endTime,
             vehicleType: vehicleType,
+            duration: hour,
             total_fee: fee
         });
 
