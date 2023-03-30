@@ -3,6 +3,7 @@ import { sendMail } from '../utils/sendMail.js'
 import { sendToken } from '../utils/sendToken.js'
 import cloudinary from 'cloudinary'
 import fs from 'fs'
+import { ParkingSpace } from '../models/parkingSpace.js';
 
 
 export const register = async (req, res) => {
@@ -317,6 +318,43 @@ export const getMyProfile = async (req, res) => {
         const user = await User.findById(req.user._id);
 
         sendToken(res, user, 201, `Welcome Back ${user.name}`);
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+export const getAllUser = async (req, res) => {
+    try {
+        const users = await User.find({});
+        
+        const userCount = users.length;
+
+        res.status(200).json({
+            success: true,
+            message: 'Details retrieved successfully',
+            userDetails: users,
+            count: userCount
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+export const deleteUser = async (req, res) => {
+    try {
+        const users = await User.deleteOne({ _id: req.params.id });
+        const parkingSpaces = await ParkingSpace.deleteMany({ ownerDetails: req.params.id });
+
+        res.status(200).json({
+            success: true,
+            message: 'User deleted successfully'
+        });
     } catch (error) {
         res.status(500).json({
             success: false,

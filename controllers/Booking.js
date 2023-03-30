@@ -45,6 +45,23 @@ export const book = async (req, res) => {
     }
 };
 
+export const getAllBooking = async (req, res) => {
+    try {
+        const bookingDetails = await Bookings.find({});
+
+        res.status(200).json({
+            success: true,
+            message: 'Details retrieved successfully',
+            bookingDetails: bookingDetails
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
 export const getMyBooking = async (req, res) => {
     try {
         const bookingDetails = await Bookings.find({ 'userDetails': req.params.id }).populate('userDetails').populate('ownerDetails').populate('parkingSpaceDetails');

@@ -120,12 +120,29 @@ export const getAllParking = async (req, res) => {
                 { "four_wheeler.no_slot": { $gt: 0 } },
                 { "two_wheeler.no_slot": { $gt: 0 } }
             ]
-        }).populate('ownerDetails')
+        }).populate('ownerDetails');
 
         res.status(200).json({
             success: true,
             message: 'Details retrieved successfully',
-            parkingSpaceDetails: parkingSpaceDetails
+            parkingSpaceDetails: parkingSpaceDetails,
+            count: parkingSpaceDetails.length
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
+export const deleteParking = async (req, res) => {
+    try {
+        const parkingSpaceDetails = await ParkingSpace.deleteOne({ _id: req.params.id })
+
+        res.status(200).json({
+            success: true,
+            message: 'Parking Space deleted successfully'
         })
     } catch (error) {
         res.status(500).json({
