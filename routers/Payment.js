@@ -3,7 +3,7 @@ import { getEarningsByMonth, getSalesByMonth, getTotalEarnings, getTotalSales, n
 
 const router = express.Router();
 
-router.route("/payment").post(newPayment);
+router.route("/newpayment").post(newPayment);
 router.route("/monthlysales").get(getSalesByMonth);
 router.route("/monthlyearnings").get(getEarningsByMonth);
 router.route("/totalsales").get(getTotalSales);
