@@ -20,11 +20,6 @@ router.route("/forgotpassword").post(forgotPassword);
 router.route("/resendotp").get(isAuthenticated, resendOTP);
 router.route("/resetpassword").post(resetPassword);
 router.route("/logout").get(logout);
-
-router.route("/newtask").post(isAuthenticated, addTask);
-router.route("/task/:taskId").get(isAuthenticated, completeTask).delete(isAuthenticated, removeTask);
-
-
 router.route("/getuser/:id").get(getUserDetails);
 router.route("/token").put(isAuthenticated, registerToken);
 

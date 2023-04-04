@@ -104,6 +104,34 @@ export const getTotalSales = async (req, res) => {
     }
 };
 
+export const getMyTotalSales = async (req, res) => {
+    try {
+
+        const paymentDetails = await Payment.aggregate([
+            {
+                $match: { "ownerDetails": req.params.id }
+            },
+            {
+                $group: {
+                    _id: null,
+                    total_sales: { $sum: "$payment_fee" }
+                }
+            }
+        ]);
+
+        res.status(200).json({
+            success: true,
+            message: 'Details retrieved successfully',
+            totalSales: paymentDetails
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
 export const getTotalEarnings = async (req, res) => {
     try {
         const paymentDetails = await Payment.aggregate([

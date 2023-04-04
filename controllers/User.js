@@ -329,7 +329,7 @@ export const getMyProfile = async (req, res) => {
 export const getAllUser = async (req, res) => {
     try {
         const users = await User.find({});
-        
+
         const userCount = users.length;
 
         res.status(200).json({
@@ -388,12 +388,15 @@ export const updateProfile = async (req, res) => {
 
         const { name } = req.body;
         const avatar = req.files.avatar.tempFilePath;
-
         if (name) user.name = name;
         if (avatar) {
-            await cloudinary.v2.uploader.destroy(user.avatar.public_id);
 
-            const mycloud = await cloudinary.uploader.upload(avatar);
+            if (user?.avatar?.public_id) await cloudinary.v2.uploader.destroy(user.avatar.public_id);
+
+            // // const mycloud = await cloudinary.uploader.upload(avatar);
+            const mycloud = await cloudinary.v2.uploader.upload(avatar, {
+                folder: 'User-Avatar',
+            });
             fs.rmSync("./tmp", { recursive: true });
             user.avatar = {
                 public_id: mycloud.public_id,
