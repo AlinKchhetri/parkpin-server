@@ -4,8 +4,9 @@ import { Payment } from "../models/payment.js";
 export const newPayment = async (req, res) => {
     try {
         const { userId, ownerId, bookingId, parkingSpaceId, fee, commission } = req.body;
+        // const { bookingId } = req.body;
 
-        paymentDetails = await Payment.create({
+        const paymentDetails = await Payment.create({
             userDetails: userId,
             ownerDetails: ownerId,
             bookingDetails: bookingId,
@@ -21,7 +22,8 @@ export const newPayment = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message: 'Payment Successful'
+            message: 'Payment Successful',
+            paymentDetail: paymentDetails
         });
     } catch (error) {
         res.status(500).json({
