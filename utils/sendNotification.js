@@ -15,8 +15,7 @@ export const sendNotification = async (token, title, body) => {
         'Content-Type': 'application/json',
     };
     try {
-        await axios.post('https://exp.host/--/api/v2/push/send', JSON.stringify(message), {headers});
-        // console.log('sent');
+        await axios.post('https://exp.host/--/api/v2/push/send', JSON.stringify(message), { headers });
         const response = 'sent'
         return response
     } catch (error) {

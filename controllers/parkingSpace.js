@@ -19,26 +19,6 @@ export const addNewSpace = async (req, res) => {
 
         fs.rmSync("./tmp", { recursive: true });
 
-        // let parkingSpace = await ParkingSpace.findOne({
-        //     location: {
-        //         $near: {
-        //             $geometry: {
-        //                 type: "Point",
-        //                 coordinates: [longitude, latitude]
-        //             },
-        //             $maxDistance: 10
-        //         }
-        //     }
-        // });
-
-        // if (parkingSpace) {
-        //     return res.status(400).json({
-        //         success: false,
-        //         message: 'Space already registered'
-        //     });
-        // }
-
-
         let parkingSpaceDetails = await ParkingSpace.create({
             ownerDetails: ownerId,
             four_wheeler: {
@@ -165,7 +145,6 @@ export const getNearParking = async (req, res) => {
                     },
                     key: "location",
                     maxDistance: 1000,
-                    // maxDistance: parseFloat(1000) * 1609,
                     distanceField: "dist.calculatedDistance",
                     spherical: true
                 },

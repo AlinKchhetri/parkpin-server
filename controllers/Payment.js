@@ -14,6 +14,11 @@ export const newPayment = async (req, res) => {
             commission_fee: commission
         });
 
+        const bookingDetails = await Bookings.findById(bookingId);
+
+        bookingDetails.status = 'Paid';
+        await bookingDetails.save();
+
         res.status(200).json({
             success: true,
             message: 'Payment Successful'

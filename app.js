@@ -6,7 +6,6 @@ import Payment from './routers/Payment.js';
 import cookieParser from 'cookie-parser';
 import fileUpload from 'express-fileupload';
 import cors from 'cors';
-import * as schedule from 'node-schedule'
 
 export const app = express();
 
